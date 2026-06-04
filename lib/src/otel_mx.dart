@@ -2,7 +2,6 @@
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
-import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_mx_suppression.dart';
 
@@ -76,78 +75,108 @@ Future<T> tracedMx<T>({
   final t = tracer ?? OTel.tracerProvider().getTracer('otel_mx');
   final span = t.startSpan('mx $operation', kind: SpanKind.client);
   try {
-    span.setStringAttribute('rpc.system', 'mx');
-    span.setStringAttribute('rpc.method', operation);
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.system', 'mx')]));
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.method', operation)]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.clientId != null) {
-        span.setStringAttribute('mx.client.id', res.clientId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.client.id', res.clientId!)]));
       }
       if (res.environment != null) {
-        span.setStringAttribute('mx.environment', res.environment!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.environment', res.environment!)]));
       }
       if (res.surface != null) {
-        span.setStringAttribute('mx.surface', res.surface!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.surface', res.surface!)]));
       }
       if (res.userGuid != null) {
-        span.setStringAttribute('mx.user.guid', res.userGuid!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.user.guid', res.userGuid!)]));
       }
       if (res.memberGuid != null) {
-        span.setStringAttribute('mx.member.guid', res.memberGuid!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.member.guid', res.memberGuid!)]));
       }
       if (res.institutionCode != null) {
-        span.setStringAttribute('mx.institution.code', res.institutionCode!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('mx.institution.code', res.institutionCode!)
+        ]));
       }
       if (res.institutionName != null) {
-        span.setStringAttribute('mx.institution.name', res.institutionName!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('mx.institution.name', res.institutionName!)
+        ]));
       }
       if (res.connectionStatus != null) {
-        span.setStringAttribute('mx.connection.status', res.connectionStatus!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('mx.connection.status', res.connectionStatus!)
+        ]));
       }
       if (res.aggregationType != null) {
-        span.setStringAttribute('mx.aggregation.type', res.aggregationType!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('mx.aggregation.type', res.aggregationType!)
+        ]));
       }
       if (res.aggregationStatus != null) {
-        span.setStringAttribute(
-            'mx.aggregation.status', res.aggregationStatus!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString('mx.aggregation.status', res.aggregationStatus!)
+        ]));
       }
       if (res.accountGuid != null) {
-        span.setStringAttribute('mx.account.guid', res.accountGuid!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.account.guid', res.accountGuid!)]));
       }
       if (res.accountKind != null) {
-        span.setStringAttribute('mx.account.kind', res.accountKind!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.account.kind', res.accountKind!)]));
       }
       if (res.accountType != null) {
-        span.setStringAttribute('mx.account.type', res.accountType!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.account.type', res.accountType!)]));
       }
       if (res.transactionsCount != null) {
-        span.setIntAttribute('mx.transactions.count', res.transactionsCount!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeInt('mx.transactions.count', res.transactionsCount!)
+        ]));
       }
       if (res.daysReturned != null) {
-        span.setIntAttribute('mx.days_returned', res.daysReturned!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('mx.days_returned', res.daysReturned!)]));
       }
       if (res.holdingsCount != null) {
-        span.setIntAttribute('mx.holdings.count', res.holdingsCount!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('mx.holdings.count', res.holdingsCount!)]));
       }
       if (res.statementsCount != null) {
-        span.setIntAttribute('mx.statements.count', res.statementsCount!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('mx.statements.count', res.statementsCount!)]));
       }
       if (res.mfaRequired != null) {
-        span.setBoolAttribute('mx.mfa.required', res.mfaRequired!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeBool('mx.mfa.required', res.mfaRequired!)]));
       }
       if (res.connectFlow != null) {
-        span.setStringAttribute('mx.connect.flow', res.connectFlow!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.connect.flow', res.connectFlow!)]));
       }
       if (res.taxonomyCategoryCount != null) {
-        span.setIntAttribute(
-            'mx.taxonomy.category_count', res.taxonomyCategoryCount!);
+        span.addAttributes(OTel.attributes([
+          OTel.attributeInt(
+              'mx.taxonomy.category_count', res.taxonomyCategoryCount!)
+        ]));
       }
       if (res.statusCode != null) {
-        span.setIntAttribute('http.response.status_code', res.statusCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
       }
       if (res.errorCode != null) {
-        span.setStringAttribute('mx.error.code', res.errorCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('mx.error.code', res.errorCode!)]));
       }
       final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400) ||
@@ -155,8 +184,10 @@ Future<T> tracedMx<T>({
           res.connectionStatus == 'FAILED' ||
           res.aggregationStatus == 'failed';
       if (fail) {
-        span.setStringAttribute(
-            ErrorResource.errorType.key, res.errorCode ?? 'mx.error');
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+              ErrorResource.errorType.key, res.errorCode ?? 'mx.error')
+        ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
     }

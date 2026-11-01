@@ -1,11 +1,12 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_mx_suppression.dart';
 
 class MxResult {
+  /// Creates a result.
   const MxResult({
     this.clientId,
     this.environment,
@@ -57,8 +58,13 @@ class MxResult {
   final String? errorMessage;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class MxCallResult<T> {
+  /// Creates a call result.
   const MxCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final MxResult? result;
 }
@@ -66,117 +72,120 @@ class MxCallResult<T> {
 Future<T> tracedMx<T>({
   required String operation,
   required Future<MxCallResult<T>> Function() invoke,
-  Tracer? tracer,
+  APITracer? tracer,
 }) async {
   if (mxInstrumentationSuppressed()) {
     final r = await invoke();
     return r.value;
   }
-  final t = tracer ?? OTel.tracerProvider().getTracer('otel_mx');
+  final t = tracer ?? OTelAPI.tracerProvider().getTracer('otel_mx');
   final span = t.startSpan('mx $operation', kind: SpanKind.client);
   try {
     span.addAttributes(
-        OTel.attributes([OTel.attributeString('rpc.system', 'mx')]));
+        OTelAPI.attributes([OTelAPI.attributeString('rpc.system', 'mx')]));
     span.addAttributes(
-        OTel.attributes([OTel.attributeString('rpc.method', operation)]));
+        OTelAPI.attributes([OTelAPI.attributeString('rpc.method', operation)]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.clientId != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.client.id', res.clientId!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.client.id', res.clientId!)]));
       }
       if (res.environment != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.environment', res.environment!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.environment', res.environment!)]));
       }
       if (res.surface != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.surface', res.surface!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.surface', res.surface!)]));
       }
       if (res.userGuid != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.user.guid', res.userGuid!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.user.guid', res.userGuid!)]));
       }
       if (res.memberGuid != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.member.guid', res.memberGuid!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.member.guid', res.memberGuid!)]));
       }
       if (res.institutionCode != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('mx.institution.code', res.institutionCode!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('mx.institution.code', res.institutionCode!)
         ]));
       }
       if (res.institutionName != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('mx.institution.name', res.institutionName!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('mx.institution.name', res.institutionName!)
         ]));
       }
       if (res.connectionStatus != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('mx.connection.status', res.connectionStatus!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('mx.connection.status', res.connectionStatus!)
         ]));
       }
       if (res.aggregationType != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('mx.aggregation.type', res.aggregationType!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString('mx.aggregation.type', res.aggregationType!)
         ]));
       }
       if (res.aggregationStatus != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString('mx.aggregation.status', res.aggregationStatus!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              'mx.aggregation.status', res.aggregationStatus!)
         ]));
       }
       if (res.accountGuid != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.account.guid', res.accountGuid!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.account.guid', res.accountGuid!)]));
       }
       if (res.accountKind != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.account.kind', res.accountKind!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.account.kind', res.accountKind!)]));
       }
       if (res.accountType != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.account.type', res.accountType!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.account.type', res.accountType!)]));
       }
       if (res.transactionsCount != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeInt('mx.transactions.count', res.transactionsCount!)
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt('mx.transactions.count', res.transactionsCount!)
         ]));
       }
       if (res.daysReturned != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('mx.days_returned', res.daysReturned!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeInt('mx.days_returned', res.daysReturned!)]));
       }
       if (res.holdingsCount != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('mx.holdings.count', res.holdingsCount!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeInt('mx.holdings.count', res.holdingsCount!)]));
       }
       if (res.statementsCount != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('mx.statements.count', res.statementsCount!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt('mx.statements.count', res.statementsCount!)
+        ]));
       }
       if (res.mfaRequired != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeBool('mx.mfa.required', res.mfaRequired!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeBool('mx.mfa.required', res.mfaRequired!)]));
       }
       if (res.connectFlow != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.connect.flow', res.connectFlow!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.connect.flow', res.connectFlow!)]));
       }
       if (res.taxonomyCategoryCount != null) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeInt(
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt(
               'mx.taxonomy.category_count', res.taxonomyCategoryCount!)
         ]));
       }
       if (res.statusCode != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt('http.response.status_code', res.statusCode!)
+        ]));
       }
       if (res.errorCode != null) {
-        span.addAttributes(OTel.attributes(
-            [OTel.attributeString('mx.error.code', res.errorCode!)]));
+        span.addAttributes(OTelAPI.attributes(
+            [OTelAPI.attributeString('mx.error.code', res.errorCode!)]));
       }
       final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400) ||
@@ -184,9 +193,9 @@ Future<T> tracedMx<T>({
           res.connectionStatus == 'FAILED' ||
           res.aggregationStatus == 'failed';
       if (fail) {
-        span.addAttributes(OTel.attributes([
-          OTel.attributeString(
-              ErrorResource.errorType.key, res.errorCode ?? 'mx.error')
+        span.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeString(
+              ErrorAttributes.errorType.key, res.errorCode ?? 'mx.error')
         ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
